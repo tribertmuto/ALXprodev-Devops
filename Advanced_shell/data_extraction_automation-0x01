@@ -17,11 +17,11 @@ HEIGHT=$(jq -r '.height' "$DATA_FILE")
 WEIGHT=$(jq -r '.weight' "$DATA_FILE")
 TYPE=$(jq -r '.types[0].type.name' "$DATA_FILE" | sed 's/.*/\u&/')
 
-# Convert height from decimeters to meters
-HEIGHT_M=$(echo "$HEIGHT / 10" | bc -l)
+# Convert height from decimeters to meters and format
+HEIGHT_M=$(echo "scale=1; $HEIGHT / 10" | bc -l | sed 's/^\./0./')
 
-# Convert weight from hectograms to kilograms  
-WEIGHT_KG=$(echo "$WEIGHT / 10" | bc -l)
+# Convert weight from hectograms to kilograms and format
+WEIGHT_KG=$(echo "scale=1; $WEIGHT / 10" | bc -l | sed 's/^\./0./' | sed 's/\.0$//')
 
-# Format the output
+# Format the output to match expected format
 echo "$NAME is of type $TYPE, weighs ${WEIGHT_KG}kg, and is ${HEIGHT_M}m tall." 

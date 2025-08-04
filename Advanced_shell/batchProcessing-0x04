@@ -15,8 +15,16 @@ BASE_URL="https://pokeapi.co/api/v2/pokemon"
 # Error log file
 ERROR_LOG="errors.txt"
 
-# Array to store background process IDs
-declare -a pids
+# Signal handler to clean up background jobs on script termination
+cleanup() {
+    echo ""
+    echo "Script interrupted. Cleaning up background jobs..."
+    kill_all_jobs
+    exit 1
+}
+
+# Set up signal handlers
+trap cleanup SIGINT SIGTERM
 
 # Function to fetch Pokémon data
 fetch_pokemon_parallel() {
@@ -33,6 +41,28 @@ fetch_pokemon_parallel() {
     fi
 }
 
+# Function to check and manage background jobs
+check_jobs() {
+    echo "Current background jobs:"
+    jobs -l
+    
+    # Check if any jobs are still running
+    if jobs -r | grep -q .; then
+        echo "Some jobs are still running..."
+        return 0
+    else
+        echo "All jobs completed!"
+        return 1
+    fi
+}
+
+# Function to kill all background jobs if needed
+kill_all_jobs() {
+    echo "Killing all background jobs..."
+    jobs -p | xargs -r kill
+    echo "All background jobs terminated."
+}
+
 # Main execution
 echo "Starting parallel Pokémon data retrieval..."
 echo "=========================================="
@@ -40,21 +70,38 @@ echo "=========================================="
 # Start background processes for each Pokémon
 for pokemon in "${POKEMON_LIST[@]}"; do
     fetch_pokemon_parallel "$pokemon" &
-    pids+=($!)
+    echo "Started background job for $pokemon (Job ID: $!)"
 done
 
-echo "Started ${#pids[@]} background processes"
+echo "Started background processes for all Pokémon"
+echo "Current jobs status:"
+jobs -l
+
+echo ""
 echo "Waiting for all processes to complete..."
 
-# Wait for all background processes to complete
-for pid in "${pids[@]}"; do
-    wait $pid
-    if [ $? -eq 0 ]; then
-        echo "Process $pid completed successfully"
-    else
-        echo "Process $pid failed"
-    fi
+# Monitor jobs and wait for completion with timeout
+timeout_counter=0
+max_timeout=60  # 60 seconds timeout
+
+while check_jobs && [ $timeout_counter -lt $max_timeout ]; do
+    sleep 2
+    timeout_counter=$((timeout_counter + 2))
 done
+
+# Check if we timed out
+if [ $timeout_counter -ge $max_timeout ]; then
+    echo "⚠️  Timeout reached. Some jobs may still be running."
+    echo "Current jobs status:"
+    jobs -l
+    
+    # Ask if user wants to kill remaining jobs
+    echo "Do you want to kill remaining jobs? (y/n)"
+    read -t 10 -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        kill_all_jobs
+    fi
+fi
 
 echo "=========================================="
 echo "Parallel retrieval completed!"

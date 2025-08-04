@@ -13,7 +13,7 @@ Located in the `Advanced_shell/` directory, this project demonstrates advanced s
 - **Data Extraction**: Advanced text manipulation using `jq`, `awk`, and `sed`
 - **Batch Processing**: Handling multiple API requests with error handling
 - **Data Summarization**: Generating CSV reports and calculating statistics
-- **Parallel Processing**: Background process management for concurrent requests
+- **Parallel Processing**: Background process management with `jobs` and `kill` commands for concurrent requests
 - **Error Handling**: Robust retry logic and error logging
 
 #### Quick Start:

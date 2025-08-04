@@ -62,12 +62,19 @@ Generates a CSV report with all Pokémon data and calculates averages.
 - Average height and weight calculations
 
 ### 5. `batchProcessing-0x04` - Parallel Data Fetching
-Fetches Pokémon data in parallel using background processes.
+Fetches Pokémon data in parallel using background processes with proper job management.
 
 **Usage:**
 ```bash
 ./batchProcessing-0x04
 ```
+
+**Features:**
+- Uses `jobs` command to monitor background processes
+- Uses `kill` command to terminate processes if needed
+- Signal handlers for graceful cleanup on interruption
+- Timeout mechanism to prevent hanging
+- Real-time job status monitoring
 
 ## Execution Order
 
