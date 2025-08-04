@@ -34,7 +34,7 @@ Extracts name, height, weight, and type from the JSON file using `jq`, `awk`, an
 
 **Output:**
 ```
-Pikachu is of type Electric, weighs 6.0kg, and is 0.4m tall.
+Pikachu is of type Electric, weighs 6kg, and is 0.4m tall.
 ```
 
 ### 3. `batchProcessing-0x02` - Batch Pokémon Data Retrieval

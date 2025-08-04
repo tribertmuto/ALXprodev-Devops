@@ -10,10 +10,10 @@ NAME="pikachu"
 TYPE="electric"
 
 # Test the conversion logic
-HEIGHT_M=$(echo "scale=1; $HEIGHT / 10" | bc -l | sed 's/^\./0./')
-WEIGHT_KG=$(echo "scale=1; $WEIGHT / 10" | bc -l | sed 's/^\./0./' | sed 's/\.0$//')
-NAME_CAP=$(echo "$NAME" | sed 's/.*/\u&/')
-TYPE_CAP=$(echo "$TYPE" | sed 's/.*/\u&/')
+formatted_height=$(echo "scale=1; $HEIGHT / 10" | bc -l | sed 's/^\./0./')
+formatted_weight=$(echo "scale=1; $WEIGHT / 10" | bc -l | sed 's/^\./0./' | sed 's/\.0$//')
+name=$(echo "$NAME" | sed 's/.*/\u&/')
+type=$(echo "$TYPE" | sed 's/.*/\u&/')
 
 echo "Original values:"
 echo "  Height: $HEIGHT decimeters"
@@ -22,10 +22,10 @@ echo "  Name: $NAME"
 echo "  Type: $TYPE"
 echo ""
 echo "Converted values:"
-echo "  Height: $HEIGHT_M meters"
-echo "  Weight: $WEIGHT_KG kilograms"
-echo "  Name: $NAME_CAP"
-echo "  Type: $TYPE_CAP"
+echo "  Height: $formatted_height meters"
+echo "  Weight: $formatted_weight kilograms"
+echo "  Name: $name"
+echo "  Type: $type"
 echo ""
 echo "Final output:"
-echo "$NAME_CAP is of type $TYPE_CAP, weighs ${WEIGHT_KG}kg, and is ${HEIGHT_M}m tall." 
+echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall." 
